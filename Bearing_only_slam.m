@@ -81,14 +81,17 @@ XL_guess = zeros(2,num_landmarks);
 #Triangulation starts
 [sort_landmark_state sort_landmark_index] = sort(landmark_associations(2,:));
 landmark_unique = unique(sort_landmark_state);
-landmark_unique_count = histc(landmark_associations(2,:),landmark_unique);
+%landmark_unique_count = histc(landmark_associations(2,:),landmark_unique);
+landmark_unique_count = histc(sort_landmark_state,landmark_unique);
+%landmark_unique_count = arrayfun(@(x)sum(sort_landmark_state==x), landmark_unique);
 for i=1:length(landmark_unique_count)
   r_vec = zeros(3,landmark_unique_count(i));
   landmark_unique_measure = zeros(1,landmark_unique_count(i));
   for j=1:landmark_unique_count(i)
     r_state = landmark_associations(1,sort_landmark_index(sum(landmark_unique_count(1:i))-landmark_unique_count(i)+j));
     r_vec(:,j) = t2v(XR_guess(:,:,r_state));
-    landmark_unique_measure(1,j) = Zl(1,r_state);
+    %landmark_unique_measure(1,j) = Zl(1,r_state);
+    landmark_unique_measure(1,j) = Zl(1,sort_landmark_index(sum(landmark_unique_count(1:i))-landmark_unique_count(i)+j));
     #r_vec(3,j) = r_vec(3,j) + landmark_unique_measure(1,j);
     #r_vec(3,j) = atan2(sin(r_vec(3,j)),cos(r_vec(3,j)));
   endfor;
@@ -100,9 +103,11 @@ for i=1:length(landmark_unique_count)
     heading_diff = r_vec(3,:)-r_vec(3,:)';
     heading_diff = atan2(sin(heading_diff),cos(heading_diff));
     for k=1:size(heading_diff,1)
-    heading_diff(k,k) = inf;
+      heading_diff(k,k) = inf;
     endfor;
-    [row,col] = find(heading_diff==min(heading_diff(:))); #find two poses having almost samee heading
+    heading_diff = abs(heading_diff);
+    [rows,cols] = find(heading_diff==min(heading_diff(:))); #find two poses having almost samee heading
+    row = rows(1); col = cols(1);
     S = norm(r_vec(1:2,row)-r_vec(1:2,col));
     delta_measure = landmark_unique_measure(1,col)-landmark_unique_measure(1,row);
     delta_measure = atan2(sin(delta_measure),cos(delta_measure));
@@ -117,7 +122,7 @@ endfor;
 #Call Solver
 damping=1;
 kernel_threshold=1e3;
-num_iterations=20;
+num_iterations=40;
 [XR, XL, chi_stats_l, num_inliers_l, chi_stats_r, num_inliers_r, H, b] = doTotalLS(XR_guess,XL_guess,Zl,landmark_associations,
                                                                             Zr,pose_associations,num_iterations,damping,kernel_threshold);
 
