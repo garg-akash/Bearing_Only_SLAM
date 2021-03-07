@@ -76,3 +76,17 @@ function T=unflattenIsometryByColumns(v)
   T(1:2,1:2)=reshape(v(1:4),2,2);
   T(1:2,3)=v(5:6);
 endfunction;
+
+#pt1 and pt2 are the starting and ending points of line 1
+#pt3 and pt4 are the starting and ending points of line 2
+function intersection_pt = computeIntersection(pt1,pt2,pt3,pt4)
+  m1 = (pt2(2)-pt1(2))/(pt2(1)-pt1(1));
+  c1 = (pt2(1)*pt1(2)-pt1(1)*pt2(2))/(pt2(1)-pt1(1));
+  
+  m2 = (pt4(2)-pt3(2))/(pt4(1)-pt3(1));
+  c2 = (pt4(1)*pt3(2)-pt3(1)*pt4(2))/(pt4(1)-pt3(1));
+  
+  x = (c2-c1)/(m1-m2);
+  y = m1*x + c1;
+  intersection_pt = [x;y];
+endfunction;

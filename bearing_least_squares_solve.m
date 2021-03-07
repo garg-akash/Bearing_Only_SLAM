@@ -84,7 +84,7 @@ function [XR, XL, chi_stats_l, num_inliers_l, chi_stats_r, num_inliers_r, H, b] 
 
     H+=eye(system_size)*damping;
     dx=zeros(system_size,1);
-    
+     
     % we solve the linear system, blocking the first pose
     % this corresponds to "remove" from H and b the locks
     % of the 1st pose, while solving the system
