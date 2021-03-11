@@ -89,7 +89,22 @@ function [XR, XL, chi_stats_l, num_inliers_l, chi_stats_r, num_inliers_r, H, b] 
     % this corresponds to "remove" from H and b the locks
     % of the 1st pose, while solving the system
 
-    dx(pose_dim+1:end)=-(H(pose_dim+1:end,pose_dim+1:end)\b(pose_dim+1:end,1));
+    #dx(pose_dim+1:end)=-(H(pose_dim+1:end,pose_dim+1:end)\b(pose_dim+1:end,1));
+    
+    %Try to fix middle pose
+		#H(((num_poses-1)/2-1)*pose_dim+1:(num_poses-1)/2*pose_dim,:)=[];
+    #            H(:,((num_poses-1)/2-1)*pose_dim+1:(num_poses-1)/2*pose_dim)=[];
+    #            b(((num_poses-1)/2-1)*pose_dim+1:(num_poses-1)/2*pose_dim)=[];
+    #            dx=-H\b;			                                                                    
+		#dx = [dx(1:((num_poses-1)/2-1)*pose_dim)' zeros(1,pose_dim) dx(((num_poses-1)/2-1)*pose_dim+1:end)']';        
+    
+    %Better results with last pose fixed
+    H((num_poses-1)*pose_dim+1:num_poses*pose_dim,:)=[];
+    H(:,(num_poses-1)*pose_dim+1:num_poses*pose_dim)=[];
+    b((num_poses-1)*pose_dim+1:num_poses*pose_dim)=[];
+    dx=-H\b;			                                                                    
+		dx = [dx(1:(num_poses-1)*pose_dim)' zeros(1,pose_dim) dx((num_poses-1)*pose_dim+1:end)']';          
+    
     [XR, XL]=boxPlus(XR, XL, num_poses, num_landmarks, dx);                         
   endfor;
 endfunction;

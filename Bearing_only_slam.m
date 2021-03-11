@@ -93,16 +93,10 @@ for i=1:length(landmark_unique_count)
     r_vec(3,j) = atan2(sin(r_vec(3,j)),cos(r_vec(3,j)));
   endfor;
   if (landmark_unique_count(i)==1)  
-    #r_vec(3,1) = r_vec(3,1) + landmark_unique_measure(1,1);
-    #r_vec(3,1) = atan2(sin(r_vec(3,1)),cos(r_vec(3,1)));
     XL_guess(:,i) = [r_vec(1,1)+cos(r_vec(3,1));r_vec(2,1)+sin(r_vec(3,1))];  
   else 
     heading_diff = r_vec(3,:)-r_vec(3,:)';
-    heading_diff = atan2(sin(heading_diff),cos(heading_diff));
-    
-    #heading_diff1 = abs(heading_diff);
-    #[rowsss,colsss] = find(heading_diff==max(heading_diff1(:)))
-    
+    heading_diff = atan2(sin(heading_diff),cos(heading_diff));    
     heading_diff = sin(abs(heading_diff));
     [rows,cols] = find(heading_diff==max(heading_diff(:))); #find two poses having max difference in their measurement heading
     row = rows(1); col = cols(1);
@@ -116,7 +110,7 @@ endfor;
 #Triangulation ends
 
 #Call Solver
-damping=1e-2;
+damping=1e-3;
 kernel_threshold=10;
 num_iterations=20;
 [XR, XL, chi_stats_l, num_inliers_l, chi_stats_r, num_inliers_r, H, b] = doTotalLS(XR_guess,XL_guess,Zl,landmark_associations,
