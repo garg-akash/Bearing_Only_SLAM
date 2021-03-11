@@ -109,8 +109,11 @@ for i=1:length(landmark_unique_count)
 endfor;
 #Triangulation ends
 
+%XR_guess = XR_true;
+%XL_guess = XL_true;
+
 #Call Solver
-damping=1e-3;
+damping=1e-4;
 kernel_threshold=10;
 num_iterations=20;
 [XR, XL, chi_stats_l, num_inliers_l, chi_stats_r, num_inliers_r, H, b] = doTotalLS(XR_guess,XL_guess,Zl,landmark_associations,
