@@ -30,3 +30,13 @@ Bearing_only_slam
 * In the bearing edges the ID of the landmarkd is reported, use it to identify them for both the triangulation and the global optimization
 
 ## Results
+
+* Graph depicting Landmarks before and after optimization; Robot poses before and after optimization
+![](img/fig1.png)
+
+* Graph depicting chi evolution of Landmarks and chi evolution of Robot poses before and after optimization; efore and after optimization
+![](img/fig2.png)
+
+* Graph depicting H matrix structure
+![](img/fig3.png)
+
